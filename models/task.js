@@ -23,5 +23,5 @@ const schema = new mongoose.Schema({
         default: Date.now
     }
 });
-
+ 
 export const Task = mongoose.model("Task", schema);
