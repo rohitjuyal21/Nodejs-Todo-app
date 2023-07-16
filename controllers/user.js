@@ -1,6 +1,7 @@
 import { User } from "../models/user.js";
 import bcrypt from "bcrypt";
 import { sendCookie } from "../utils/features.js";
+import ErrorHandler from "../middlewares/error.js";
 
 export const login = async (req, res) => {
     try {
@@ -14,7 +15,7 @@ export const login = async (req, res) => {
 
         if (!isMatch) return next(new ErrorHandler("Invalid Email or Password", 400));
 
-        sendCookie(user, res, `Welcome back, ${user.name}`, 201)
+        sendCookie(user, res, `Welcome back, ${user.name}`, 200)
     } catch (error) {
         next(error);
     }
@@ -25,7 +26,6 @@ export const register = async (req, res) => {
         const { name, email, password } = req.body;
 
         let user = await User.findOne({ email });
-        console.log(user)
 
         if (user) return next(new ErrorHandler("User Already Exist", 400));
 
@@ -51,7 +51,6 @@ export const logout = (req, res) => {
     res
         .status(200)
         .cookie("token", null, {
-            httpOnly: true,
             expires: new Date(Date.now()),
             sameSite: process.env.NODE_ENV === "Development" ? "lax" : "none",
             secure: process.env.NODE_ENV === "Development" ? false : true,
